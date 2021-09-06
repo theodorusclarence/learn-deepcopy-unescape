@@ -1,55 +1,77 @@
 import * as React from 'react';
+import stringifyObject from 'stringify-object';
+
+import { unescapeHtml } from '@/lib/helper';
 
 import Seo from '@/components/Seo';
 import CustomLink from '@/components/links/CustomLink';
-import ButtonLink from '@/components/links/ButtonLink';
-import UnstyledLink from '@/components/links/UnstyledLink';
 
 export default function HomePage() {
+  //#region  //*====== Testing in console.log
+  const before = {
+    string: 'hi',
+    oddString: '&lt;yes',
+    bool: true,
+    arrOfString: ['one', '&lt;wow'],
+    nested: { key1: '&amp;', key2: true, nested2: ['&lt;&gt;'] },
+    arrOfObj: [
+      { key1: '&amp;', key2: true, nested2: ['&lt;&gt;'] },
+      { key1: '&amp;', key2: true, nested2: ['&lt;&gt;'] },
+    ],
+    misc: 'aaaaaa&apos;&amp;aaaaaaaa',
+  };
+  const after = unescapeHtml(before);
+  // eslint-disable-next-line no-console
+  console.log('🚀 ~ file: index.tsx ~ line 18 ~ HomePage ~ before', before);
+  // eslint-disable-next-line no-console
+  console.log('🚀 ~ file: index.tsx ~ line 12 ~ HomePage ~ after', after);
+  //#endregion //*====== Testing in console.log
+
+  const [beforeText, setBeforeText] = React.useState(() =>
+    stringifyObject(before, {
+      indent: '  ',
+      singleQuotes: true,
+    })
+  );
+  const afterText = unescapeHtml(beforeText);
+
+  function handleBeforeChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setBeforeText(e.target.value);
+  }
+
   return (
     <>
       <Seo templateTitle='Home' />
 
       <main>
         <section className='bg-dark'>
-          <div className='flex flex-col items-center justify-center min-h-screen text-center text-white layout'>
-            <h1 className='text-2xl md:text-4xl'>
-              <CustomLink href='https://github.com/theodorusclarence/ts-nextjs-tailwind-starter'>
-                Next.js + Tailwind CSS + TypeScript Starter
-              </CustomLink>
-            </h1>
-            <p className='mt-2 text-sm text-gray-300'>
-              A starter for Next.js, Tailwind CSS, and TypeScript with Absolute
-              Import, Seo, Link component, pre-configured with Husky{' '}
-            </p>
-
-            <ButtonLink
-              className='mt-4'
-              href='/components'
-              variants='secondary'
+          <div className='layout py-20 text-white'>
+            <h1>Test Deep Copy {'&'} Unescape HTML</h1>
+            <CustomLink
+              className='text-gray-400 mt-2'
+              href='https://github.com/theodorusclarence/learn-deepcopy-unescape'
             >
-              See all components
-            </ButtonLink>
+              Repository
+            </CustomLink>
 
-            <UnstyledLink
-              href='https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Ftheodorusclarence%2Fts-nextjs-tailwind-starter'
-              className='mt-4'
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                width='92'
-                height='32'
-                src='https://vercel.com/button'
-                alt='Deploy with Vercel'
-              />
-            </UnstyledLink>
-
-            <footer className='absolute text-gray-500 bottom-2'>
-              © {new Date().getFullYear()} By{' '}
-              <CustomLink href='https://theodorusclarence.com?ref=tsnextstarter'>
-                Theodorus Clarence
-              </CustomLink>
-            </footer>
+            <div className='space-y-4 mt-8'>
+              <div className='flex flex-col gap-2'>
+                <label htmlFor='before'>Before</label>
+                <textarea
+                  className='font-mono bg-dark'
+                  name='before'
+                  id='before'
+                  value={beforeText}
+                  onChange={handleBeforeChange}
+                  cols={10}
+                  rows={20}
+                ></textarea>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <p>After</p>
+                <pre>{afterText}</pre>
+              </div>
+            </div>
           </div>
         </section>
       </main>
